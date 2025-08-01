@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: channelapi-deployment
+  labels:
+    app: channelapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: channelapi
+  template:
+    metadata:
+      labels:
+        app: channelapi
+    spec:
+      containers:
+      - name: channelapi
+        image: jcmunuera/channelapi-2:1.0.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8081
+        env:
+        - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+          value: "my-kafka.default.svc.cluster.local:9092" # Service name for Kafka in Kubernetes
+        - name: FINANCIAL_API_URL
+          value: "http://financialapi-service:8080" # Service name for Financial API
+        - name: SPRING_KAFKA_PROPERTIES_SASL_MECHANISM
+          value: "SCRAM-SHA-256"
+        - name: SPRING_KAFKA_PROPERTIES_SECURITY_PROTOCOL
+          value: "SASL_PLAINTEXT"
+        - name: SPRING_KAFKA_SASL_USERNAME
+          value: "user1"
+        - name: SPRING_KAFKA_SASL_PASSWORD
+          value: "AILb7tCfHG"
+        - name: JAVA_TOOL_OPTIONS
+          value: "-Djava.security.auth.login.config=/etc/kafka/jaas.conf"
+        - name: SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING
+          value: "true"
+        - name: SPRING_AOP_PROXY_TARGET_CLASS
+          value: "true"
+        - name: LOGGING_LEVEL_ROOT
+          value: "TRACE"
+        - name: SPRING_BOOT_DEBUG
+          value: "true"
+        volumeMounts:
+        - name: jaas-config
+          mountPath: /etc/kafka/
+          readOnly: true
+      volumes:
+      - name: jaas-config
+        secret:
+          secretName: kafka-jaas-config
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: channelapi-service
+  labels:
+    app: channelapi
+spec:
+  selector:
+    app: channelapi
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+  type: NodePort # Use NodePort to expose the service outside the cluster for testing

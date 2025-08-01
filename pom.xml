@@ -1,0 +1,101 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.jcm</groupId>
+    <artifactId>banking-app</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>prospective</module>
+        <module>financialcontract</module>
+        <module>financialapi-2</module>
+        <module>channelapi-2</module>
+        <module>auditevent</module>
+        <module>common-context</module>
+        <module>auditprojection</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.boot.version>3.5.4</spring.boot.version>
+        <axon.version>4.9.0</axon.version>
+        <lombok.version>1.18.34</lombok.version>
+        <jackson.version>2.19.1</jackson.version>
+        <spring.kafka.version>3.3.7</spring.kafka.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        
+            <dependency>
+                <groupId>org.axonframework</groupId>
+                <artifactId>axon-spring-boot-starter</artifactId>
+                <version>${axon.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.axonframework</groupId>
+                <artifactId>axon-server-connector</artifactId>
+                <version>${axon.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.kafka</groupId>
+                <artifactId>spring-kafka</artifactId>
+                <version>${spring.kafka.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>com.jcm.financialcontract</groupId>
+                <artifactId>financial-dtos</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>            
+            <dependency>
+                <groupId>com.jcm</groupId>
+                <artifactId>common-context</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring.boot.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        
+    </build>
+
+</project>

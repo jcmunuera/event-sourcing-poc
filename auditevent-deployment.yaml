@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auditevent-deployment
+  labels:
+    app: auditevent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auditevent
+  template:
+    metadata:
+      labels:
+        app: auditevent
+    spec:
+      containers:
+      - name: auditevent
+        image: jcmunuera/auditevent:1.0.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080 # Default Spring Boot port, adjust if auditevent uses a different one
+        env:
+        - name: AXON_AXONSERVER_SERVERS
+          value: "axonserver.default.svc.cluster.local:8124" # Assuming Axon Server is deployed as 'axonserver' service
+        - name: AXONSERVER_DEFAULT_CONTEXT
+          value: "default"
+        - name: SPRING_KAFKA_PROPERTIES_SASL_MECHANISM
+          value: "SCRAM-SHA-256"
+        - name: SPRING_KAFKA_PROPERTIES_SECURITY_PROTOCOL
+          value: "SASL_PLAINTEXT"
+        - name: SPRING_KAFKA_SASL_USERNAME
+          value: "user1"
+        - name: SPRING_KAFKA_SASL_PASSWORD
+          value: "AILb7tCfHG"
+        - name: JAVA_TOOL_OPTIONS
+          value: "-Djava.security.auth.login.config=/etc/kafka/jaas.conf"
+        volumeMounts:
+        - name: jaas-config
+          mountPath: /etc/kafka/
+          readOnly: true
+      volumes:
+      - name: jaas-config
+        secret:
+          secretName: kafka-jaas-config # This secret should contain jaas.conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auditevent-service
+  labels:
+    app: auditevent
+spec:
+  selector:
+    app: auditevent
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP # Typically, auditevent would be an internal service

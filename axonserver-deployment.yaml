@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: axonserver-deployment
+  labels:
+    app: axonserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: axonserver
+  template:
+    metadata:
+      labels:
+        app: axonserver
+    spec:
+      containers:
+      - name: axonserver
+        image: axoniq/axonserver:2025.1.2
+        ports:
+        - containerPort: 8024
+        - containerPort: 8124
+        volumeMounts:
+        - name: axonserver-data
+          mountPath: /eventstore
+        - name: config
+          mountPath: /axonserver/config
+      volumes:
+      - name: axonserver-data
+        persistentVolumeClaim:
+          claimName: axonserver-pvc
+      - name: config
+        configMap:
+          name: axonserver-config
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: axonserver-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: axonserver
+  labels:
+    app: axonserver
+spec:
+  selector:
+    app: axonserver
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8024
+    targetPort: 8024
+  - name: grpc
+    protocol: TCP
+    port: 8124
+    targetPort: 8124
+  type: ClusterIP

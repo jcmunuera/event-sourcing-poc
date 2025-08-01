@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auditprojection-deployment
+  labels:
+    app: auditprojection
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auditprojection
+  template:
+    metadata:
+      labels:
+        app: auditprojection
+    spec:
+      containers:
+      - name: auditprojection
+        image: jcmunuera/auditprojection:java21-dockerfile
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://postgresql-service:5432/auditdb"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "audituser"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "auditpassword"
+        - name: AXON_AXONSERVER_SERVERS
+          value: "axonserver.default.svc.cluster.local:8124"
+        - name: AXON_AXONSERVER_ENABLED
+          value: "true"
+        - name: AXONSERVER_DEFAULT_CONTEXT
+          value: "default"
+        - name: JAVA_TOOL_OPTIONS
+          value: "-Djava.security.egd=file:/dev/./urandom"

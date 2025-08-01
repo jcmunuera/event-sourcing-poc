@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: axonserver-config
+data:
+  axonserver.properties: |
+    axoniq.axonserver.standalone=true
+    axoniq.axonserver.hostname=axonserver.default.svc.cluster.local
+    axoniq.axonserver.name=axonserver
+    axoniq.axonserver.replicationgroup=default
+    axoniq.axonserver.standalone-context=default
+    axoniq.axonserver.internal-hostname=axonserver.default.svc.cluster.local
+    axoniq.axonserver.grpc-port=8124
+    axoniq.axonserver.http-port=8024
+    axoniq.axonserver.autoconfigure=true
+    axoniq.axonserver.devmode.enabled=true

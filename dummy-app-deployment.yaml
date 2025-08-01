@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dummy-app-deployment
+  labels:
+    app: dummy-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dummy-app
+  template:
+    metadata:
+      labels:
+        app: dummy-app
+    spec:
+      containers:
+      - name: dummy-app
+        image: jcmunuera/dummy-app:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9080
+        env:
+        - name: LOGGING_LEVEL_ROOT
+          value: "TRACE"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dummy-app-service
+  labels:
+    app: dummy-app
+spec:
+  selector:
+    app: dummy-app
+  ports:
+    - protocol: TCP
+      port: 8090
+      targetPort: 9080
+  type: NodePort

@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: auditevent
+  kafka:
+    consumer:
+      bootstrap-servers: my-kafka.default.svc.cluster.local:9092
+      group-id: audit-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+
+logging:
+  level:
+    org.axonframework: INFO
+
+axon:
+  axonserver:
+    servers: axonserver.default.svc.cluster.local:8124
+    contexts: default
+    enabled: true
+
+audit:
+  event:
+    mapping:
+      login: UserLoggedInEvent
+      transferFunds: FundsTransferEvent

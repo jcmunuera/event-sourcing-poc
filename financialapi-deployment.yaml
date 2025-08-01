@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: financialapi-deployment
+  labels:
+    app: financialapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: financialapi
+  template:
+    metadata:
+      labels:
+        app: financialapi
+    spec:
+      containers:
+      - name: financialapi
+        image: jcmunuera/financialapi-2:1.0.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+          value: "my-kafka.default.svc.cluster.local:9092" # Service name for Kafka in Kubernetes
+        - name: SPRING_KAFKA_PROPERTIES_SASL_MECHANISM
+          value: "SCRAM-SHA-256"
+        - name: SPRING_KAFKA_PROPERTIES_SECURITY_PROTOCOL
+          value: "SASL_PLAINTEXT"
+        - name: SPRING_KAFKA_SASL_USERNAME
+          value: "user1"
+        - name: SPRING_KAFKA_SASL_PASSWORD
+          value: "AILb7tCfHG"
+        - name: JAVA_TOOL_OPTIONS
+          value: "-Djava.security.auth.login.config=/etc/kafka/jaas.conf"
+        - name: SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING
+          value: "true"
+        - name: SPRING_AOP_PROXY_TARGET_CLASS
+          value: "true"
+        volumeMounts:
+        - name: jaas-config
+          mountPath: /etc/kafka/
+          readOnly: true
+      volumes:
+      - name: jaas-config
+        secret:
+          secretName: kafka-jaas-config
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: financialapi-service
+  labels:
+    app: financialapi
+spec:
+  selector:
+    app: financialapi
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP # Use ClusterIP as this service is only accessed internally by channelapi
