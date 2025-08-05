@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: auditeventLC
+  datasource:
+    url: jdbc:postgresql://postgresql-service.default.svc.cluster.local:5432/auditdb
+    username: audituser
+    password: auditpassword
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: false
+  kafka:
+    consumer:
+      bootstrap-servers: my-kafka.default.svc.cluster.local:9092
+      group-id: audit-group-lc
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+
+audit:
+  event:
+    mapping:
+      login: UserLoggedInEvent
+      transferFunds: FundsTransferredEvent
