@@ -1,0 +1,42 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{"meta.helm.sh/release-name":"my-kafka","meta.helm.sh/release-namespace":"default"},"creationTimestamp":"2025-07-22T06:55:40Z","generation":1,"labels":{"app.kubernetes.io/component":"controller","app.kubernetes.io/instance":"my-kafka","app.kubernetes.io/managed-by":"Helm","app.kubernetes.io/name":"kafka","app.kubernetes.io/part-of":"kafka","app.kubernetes.io/version":"4.0.0","helm.sh/chart":"kafka-32.3.1"},"name":"my-kafka-controller","namespace":"default","resourceVersion":"913","uid":"3b03d321-fcae-4ce6-986d-fc3f25537b70"},"spec":{"egress":[{}],"ingress":[{"from":[{"podSelector":{"matchLabels":{"app":"temp-kafka-client"}}}],"ports":[{"port":9093,"protocol":"TCP"},{"port":9092,"protocol":"TCP"},{"port":9094,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app.kubernetes.io/component":"controller","app.kubernetes.io/instance":"my-kafka","app.kubernetes.io/name":"kafka","app.kubernetes.io/part-of":"kafka"}},"policyTypes":["Ingress","Egress"]}}
+    meta.helm.sh/release-name: my-kafka
+    meta.helm.sh/release-namespace: default
+  creationTimestamp: "2025-07-22T06:55:40Z"
+  generation: 2
+  labels:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/instance: my-kafka
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kafka
+    app.kubernetes.io/part-of: kafka
+    app.kubernetes.io/version: 4.0.0
+    helm.sh/chart: kafka-32.3.1
+  name: my-kafka-controller
+  namespace: default
+  resourceVersion: "345193"
+  uid: 3b03d321-fcae-4ce6-986d-fc3f25537b70
+spec:
+  egress:
+  - {}
+  ingress:
+  - ports:
+    - port: 9093
+      protocol: TCP
+    - port: 9092
+      protocol: TCP
+    - port: 9094
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: controller
+      app.kubernetes.io/instance: my-kafka
+      app.kubernetes.io/name: kafka
+      app.kubernetes.io/part-of: kafka
+  policyTypes:
+  - Ingress
+  - Egress

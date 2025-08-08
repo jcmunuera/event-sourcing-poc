@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auditprojectionlc
+  labels:
+    app: auditprojectionlc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auditprojectionlc
+  template:
+    metadata:
+      labels:
+        app: auditprojectionlc
+    spec:
+      containers:
+      - name: auditprojectionlc
+        image: jcmunuera/auditprojectionlc:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://postgresql-service.default.svc.cluster.local:5432/auditdb"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "audituser"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "auditpassword"
+        - name: SPRING_KAFKA_PROPERTIES_SASL_MECHANISM
+          value: "SCRAM-SHA-256"
+        - name: SPRING_KAFKA_PROPERTIES_SECURITY_PROTOCOL
+          value: "SASL_PLAINTEXT"
+        - name: SPRING_KAFKA_SASL_USERNAME
+          value: "user1"
+        - name: SPRING_KAFKA_SASL_PASSWORD
+          value: "XKmY4LUimm"
+        - name: JAVA_TOOL_OPTIONS
+          value: "-Djava.security.auth.login.config=/etc/kafka/jaas.conf"
+        volumeMounts:
+        - name: jaas-config
+          mountPath: /etc/kafka/
+          readOnly: true
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+      volumes:
+      - name: jaas-config
+        secret:
+          secretName: kafka-jaas-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auditprojectionlc-service
+  labels:
+    app: auditprojectionlc
+spec:
+  selector:
+    app: auditprojectionlc
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP

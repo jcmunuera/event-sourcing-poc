@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-connect
+  labels:
+    app: kafka-connect
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-connect
+  template:
+    metadata:
+      labels:
+        app: kafka-connect
+    spec:
+      containers:
+      - name: kafka-connect
+        image: quay.io/debezium/connect:2.7.0.Final
+        ports:
+        - containerPort: 8083
+        volumeMounts:
+        - name: jaas-config
+          mountPath: /etc/kafka/jaas.conf
+          subPath: jaas.conf
+        - name: connect-config
+          mountPath: /kafka/config/connect-distributed.properties
+          subPath: connect-distributed.properties
+      volumes:
+      - name: jaas-config
+        configMap:
+          name: kafka-connect-jaas-config
+      - name: connect-config
+        configMap:
+          name: kafka-connect-config

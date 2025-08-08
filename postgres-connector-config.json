@@ -1,0 +1,28 @@
+{
+  "name": "auditevent-postgres-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "tasks.max": "1",
+    "database.hostname": "postgresql-service.default.svc.cluster.local",
+    "database.port": "5432",
+    "database.user": "audit_user",
+    "database.password": "audit_password",
+    "database.dbname": "auditdb",
+    "database.server.name": "auditevent",
+    "schema.include.list": "auditevent",
+    "table.include.list": "auditevent.domain_events",
+    "topic.prefix": "auditevent",
+    "plugin.name": "pgoutput",
+    "slot.name": "debezium_audit_slot",
+    "publication.name": "dbz_publication",
+    "publication.autocreate.mode": "filtered",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "false",
+    "value.converter.schemas.enable": "false",
+    "transforms": "route",
+    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.route.regex": "auditevent.auditevent.domain_events",
+    "transforms.route.replacement": "electronic-journal-projection"
+  }
+}

@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auditeventlc-deployment
+  labels:
+    app: auditeventlc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auditeventlc
+  template:
+    metadata:
+      labels:
+        app: auditeventlc
+    spec:
+      containers:
+      - name: auditeventlc
+        image: jcmunuera/auditeventlc:1.0.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://postgresql-service.default.svc.cluster.local:5432/auditdb"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "audituser"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "auditpassword"
+        - name: SPRING_KAFKA_PROPERTIES_SASL_MECHANISM
+          value: "SCRAM-SHA-256"
+        - name: SPRING_KAFKA_PROPERTIES_SECURITY_PROTOCOL
+          value: "SASL_PLAINTEXT"
+        - name: SPRING_KAFKA_SASL_USERNAME
+          value: "user1"
+        - name: SPRING_KAFKA_SASL_PASSWORD
+          value: "AILb7tCfHG"
+        - name: JAVA_TOOL_OPTIONS
+          value: "-Djava.security.auth.login.config=/etc/kafka/jaas.conf"
+        volumeMounts:
+        - name: jaas-config
+          mountPath: /etc/kafka/
+          readOnly: true
+      volumes:
+      - name: jaas-config
+        secret:
+          secretName: kafka-jaas-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auditeventlc-service
+  labels:
+    app: auditeventlc
+spec:
+  selector:
+    app: auditeventlc
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP

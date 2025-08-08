@@ -1,0 +1,13 @@
+FROM confluentinc/cp-kafka-connect:7.6.0
+
+USER root
+
+
+
+COPY debezium-connector-postgres/debezium-api-2.5.0.Final.jar /usr/share/java/kafka-connect/
+COPY debezium-connector-postgres/debezium-connector-postgres-2.5.0.Final.jar /usr/share/java/kafka-connect/
+COPY debezium-connector-postgres/debezium-core-2.5.0.Final.jar /usr/share/java/kafka-connect/
+COPY debezium-connector-postgres/postgresql-42.6.0.jar /usr/share/java/kafka-connect/
+COPY debezium-connector-postgres/protobuf-java-3.25.1.jar /usr/share/java/kafka-connect/
+
+USER appuser

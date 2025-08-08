@@ -16,7 +16,7 @@ logging:
 axon:
   axonserver:
     servers: axonserver.default.svc.cluster.local:8124
-    contexts: default
+    remos : default
     enabled: true
 
 audit:
